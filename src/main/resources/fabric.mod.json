@@ -1,0 +1,36 @@
+{
+	"schemaVersion": 1,
+	"id": "simple-chat-stickers",
+	"version": "${version}",
+	"name": "Simple chat stickers",
+	"description": "The mod adds stickers to the chat.\nThere is support for sticker packs.\n minecraft/sticker-packs/[packs... (.zip)]",
+	"authors": [
+		"Vexillarius_K-9420"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/project/simple-chat-stickers"
+	},
+	"icon": "assets/simple-chat-stickers/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"vex.simplechatstickers.SimpleChatStickers"
+		],
+		"client": [
+			"vex.simplechatstickers.client.SimpleChatStickersClient"
+		]
+	},
+	"mixins": [
+		"simple-chat-stickers.mixins.json",
+		{
+			"config": "simple-chat-stickers.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": "${md_fl}",
+		"minecraft": "${md_mcv}",
+		"java": "${md_java}",
+		"fabric-api": "*"
+	}
+}

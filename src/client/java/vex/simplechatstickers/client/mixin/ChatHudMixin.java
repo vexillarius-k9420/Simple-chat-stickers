@@ -1,5 +1,6 @@
 package vex.simplechatstickers.client.mixin;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
@@ -25,6 +26,7 @@ public abstract class ChatHudMixin {
     private int scrolledLines;
     @Shadow protected abstract boolean isChatFocused();
     @Shadow protected abstract boolean isChatHidden();
+    @Shadow public abstract int getHeight();
 
     @Inject(method = "render", at = @At("TAIL"))
     //? if 1.20-fabric {
@@ -38,7 +40,7 @@ public abstract class ChatHudMixin {
         boolean isChatOpen = this.isChatFocused();
         if (!isChatOpen && this.isChatHidden()) return;
 
-        float opacity = net.minecraft.client.MinecraftClient.getInstance().options.getChatOpacity().getValue().floatValue();
+        float opacity = MinecraftClient.getInstance().options.getChatOpacity().getValue().floatValue();
         if (opacity <= 0.0f) return;
 
         int chatBottomY = context.getScaledWindowHeight() - 40;
@@ -77,10 +79,11 @@ public abstract class ChatHudMixin {
 
                     if (messageText.contains(stickerCode)) {
                         int visualLineIndex = lineCount - this.scrolledLines;
-                        float chatLineSpacing = net.minecraft.client.MinecraftClient.getInstance().options.getChatLineSpacing().getValue().floatValue();
-                        float chatScale = net.minecraft.client.MinecraftClient.getInstance().options.getChatScale().getValue().floatValue();
+                        float chatLineSpacing = MinecraftClient.getInstance().options.getChatLineSpacing().getValue().floatValue();
+                        chatLineSpacing = ((float)Math.floor(chatLineSpacing/0.11f))*0.11f;
+                        float chatScale = MinecraftClient.getInstance().options.getChatScale().getValue().floatValue();
 
-                        if (visualLineIndex >= 0 && visualLineIndex < 20) {
+                        if (visualLineIndex >= -5 && visualLineIndex < 25) {
                             int x = Math.round(5*(1f+chatScale));
                             int y = Math.round(chatBottomY - (visualLineIndex * (9f*(1f+chatLineSpacing)*chatScale)) - (35f*(1f+chatLineSpacing)*chatScale)); // -71
 
@@ -89,6 +92,7 @@ public abstract class ChatHudMixin {
 
                             context.getMatrices().push();
                             context.getMatrices().translate(0, 0, 110f);
+                            context.enableScissor(0, (int)(((((int)(((float)chatBottomY-this.getHeight())+5f)/9)*9)+3)*chatScale), MinecraftClient.getInstance().getWindow().getWidth(), chatBottomY);
 
                             // texture из реестра вместо жесткого пути
                             context.drawTexture(
@@ -98,6 +102,7 @@ public abstract class ChatHudMixin {
                                     0f, 0f, 512, 512, 512, 512
                             );
 
+                            context.disableScissor();
                             context.getMatrices().pop();
                             com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
                         }

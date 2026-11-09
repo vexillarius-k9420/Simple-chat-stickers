@@ -30,10 +30,10 @@ public abstract class ChatHudMixin {
 
     @Inject(method = "render", at = @At("TAIL"))
     //? if 1.20-fabric {
-    private void onRender(DrawContext context, int currentTick, int mouseX, int mouseY, CallbackInfo ci) {
-    //?} elif 1.21-fabric {
-    /*private void onRender(DrawContext context, int currentTick, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
-    *///?}
+    /*private void onRender(DrawContext context, int currentTick, int mouseX, int mouseY, CallbackInfo ci) {
+    *///?} elif 1.21-fabric {
+    private void onRender(DrawContext context, int currentTick, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
+    //?}
 
         if (this.visibleMessages == null || this.visibleMessages.isEmpty()) return;
 
@@ -92,7 +92,7 @@ public abstract class ChatHudMixin {
 
                             context.getMatrices().push();
                             context.getMatrices().translate(0, 0, 110f);
-                            context.enableScissor(0, (int)(((((int)(((float)chatBottomY-(this.getHeight()*chatScale)+5f)/9)*9)+3))), MinecraftClient.getInstance().getWindow().getWidth(), chatBottomY);
+                            context.enableScissor(0, (((((int)(((float)chatBottomY-(this.getHeight()*chatScale)+5f)/9)*9)+3))), MinecraftClient.getInstance().getWindow().getWidth(), chatBottomY);
 
                             // texture из реестра вместо жесткого пути
                             context.drawTexture(

@@ -72,7 +72,7 @@ java {
 
 remapJar {
 	// Имя jar-ника целиком
-	archiveFileName = "${project.mod_name}_${version}-${stonecutter.current.version}.jar"
+	archiveFileName = "${project.mod_name}_${version}+${stonecutter.current.version}.jar"
 }
 
 jar {

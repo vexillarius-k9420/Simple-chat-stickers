@@ -32,7 +32,7 @@ public class ClientStickerLoader {
             try {
                 Files.createDirectories(packsDir);
             } catch (Exception e) {
-                System.err.println("[SimpleChatStickers] Не удалось создать папку стикеров: " + e.getMessage());
+                System.err.println("[SimpleChatStickers] Failed to create sticker folder: " + e.getMessage());
                 return;
             }
         }
@@ -44,7 +44,7 @@ public class ClientStickerLoader {
             try (ZipFile zip = new ZipFile(zipFile)) {
                 ZipEntry jsonEntry = zip.getEntry("pack.json");
                 if (jsonEntry == null) {
-                    System.err.println("[SimpleChatStickers] Пропущен архив " + zipFile.getName() + ": отсутствует pack.json");
+                    System.err.println("[SimpleChatStickers] Missing archive " + zipFile.getName() + ": missing pack.json");
                     continue;
                 }
 
@@ -61,7 +61,7 @@ public class ClientStickerLoader {
 
                         ZipEntry imgEntry = zip.getEntry(imagePath);
                         if (imgEntry == null) {
-                            System.err.println("[SimpleChatStickers] Файл " + imagePath + " не найден в архиве " + zipFile.getName());
+                            System.err.println("[SimpleChatStickers] File " + imagePath + " not found in archive " + zipFile.getName());
                             continue;
                         }
 
@@ -80,10 +80,10 @@ public class ClientStickerLoader {
                                     .put("`" + stickerCode + "`", dynamicIdentifier);
                         }
                     }
-                    System.out.println("[SimpleChatStickers] Успешно загружен пак: " + packName);
+                    System.out.println("[SimpleChatStickers] The package was successfully downloaded.: " + packName);
                 }
             } catch (Exception e) {
-                System.err.println("[SimpleChatStickers] Ошибка при чтении архива " + zipFile.getName() + ": " + e.getMessage());
+                System.err.println("[SimpleChatStickers] Error reading archive " + zipFile.getName() + ": " + e.getMessage());
                 e.printStackTrace();
             }
         }

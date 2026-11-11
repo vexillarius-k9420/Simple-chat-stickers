@@ -17,9 +17,13 @@ public class ChatListenerMixin {
 
     @ModifyVariable(method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;Lnet/minecraft/client/gui/hud/MessageIndicator;)V", at = @At("HEAD"), argsOnly = true)
     private Text replaceStickerCode(Text message) {
-        String content = "";
-        TranslatableTextContent messageContent = (TranslatableTextContent) message.getContent();
-        if (Objects.equals(messageContent.getKey(), "chat.type.text")) {
+        String content;
+        TranslatableTextContent messageContent = null;
+
+        boolean normalMessage = (message.getContent() instanceof TranslatableTextContent
+                && Objects.equals(((TranslatableTextContent)message.getContent()).getKey(), "chat.type.text"));
+        if (normalMessage) {
+            messageContent = (TranslatableTextContent) message.getContent();
             content = messageContent.getArg(1).getString();
         } else  {
             content = message.getString();
@@ -38,13 +42,13 @@ public class ChatListenerMixin {
 
                     result.append(Text.literal(partBefore).setStyle(message.getStyle()));
                     MutableText codeText = Text.literal(spacing +"   "+ code + spacing + (partAfter.isEmpty() ? "" : "\n")).formatted(Formatting.DARK_GRAY);
-                    codeText.setStyle(codeText.getStyle().withClickEvent(
-                            new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, code)
-                    ));
+                    codeText.setStyle(codeText.getStyle()
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, code))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("Click to copy\n "+code))));
                     result.append(codeText);
                     result.append(Text.literal(partAfter).setStyle(message.getStyle()));
 
-                    if (Objects.equals(messageContent.getKey(), "chat.type.text")) {
+                    if (normalMessage) {
                         Object[] args = new Object[]{messageContent.getArg(0), result};
                         TranslatableTextContent newContent = new TranslatableTextContent(messageContent.getKey(), messageContent.getFallback(), args);
                         return MutableText.of(newContent);
